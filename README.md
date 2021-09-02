@@ -8,6 +8,8 @@ The T. J. Watson Libraries for Analysis (WALA) provide static analysis capabilit
 
 For recent updates on WALA, join the [mailing list](http://sourceforge.net/p/wala/mailman/).
 
+This is the Minijar development branch
+
 ## Core WALA Features
 
 WALA features include:
