@@ -2290,27 +2290,27 @@ public abstract class SSAPropagationCallGraphBuilder extends PropagationCallGrap
       vn = index + 1;
     }
 
-    FilteredPointerKey.TypeFilter filter =
-        (FilteredPointerKey.TypeFilter) target.getContext().get(ContextKey.PARAMETERS[index]);
-    if (filter != null && !filter.isRootFilter()) {
-      return getFilteredPointerKeyForLocal(target, vn, filter);
-
+    if (target.getContext().get(ContextKey.PARAMETERS[index])
+        instanceof FilteredPointerKey.TypeFilter) {
+      FilteredPointerKey.TypeFilter filter =
+          (FilteredPointerKey.TypeFilter) target.getContext().get(ContextKey.PARAMETERS[index]);
+      if (filter != null && !filter.isRootFilter()) {
+        return getFilteredPointerKeyForLocal(target, vn, filter);
+      }
+    }
+    // the context does not select a particular concrete type for the
+    // receiver, so use the type of the method
+    IClass C;
+    if (index == 0 && !target.getMethod().isStatic()) {
+      C = getReceiverClass(target.getMethod());
     } else {
-      // the context does not select a particular concrete type for the
-      // receiver, so use the type of the method
-      IClass C;
-      if (index == 0 && !target.getMethod().isStatic()) {
-        C = getReceiverClass(target.getMethod());
-      } else {
-        C = cha.lookupClass(target.getMethod().getParameterType(index));
-      }
+      C = cha.lookupClass(target.getMethod().getParameterType(index));
+    }
 
-      if (C == null || C.getClassHierarchy().getRootClass().equals(C)) {
-        return getPointerKeyForLocal(target, vn);
-      } else {
-        return getFilteredPointerKeyForLocal(
-            target, vn, new FilteredPointerKey.SingleClassFilter(C));
-      }
+    if (C == null || C.getClassHierarchy().getRootClass().equals(C)) {
+      return getPointerKeyForLocal(target, vn);
+    } else {
+      return getFilteredPointerKeyForLocal(target, vn, new FilteredPointerKey.SingleClassFilter(C));
     }
   }
 
